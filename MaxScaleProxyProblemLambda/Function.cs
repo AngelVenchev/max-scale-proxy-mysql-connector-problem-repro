@@ -1,12 +1,28 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using MaxScaleProxyProblem;
 
-namespace MaxScaleProxyProblem
+using Amazon.Lambda.Core;
+
+// Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
+[assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
+
+namespace MaxScaleProxyProblemLambda
 {
-    class Program
+    public class Function
     {
-        static void Main(string[] args)
+        
+        /// <summary>
+        /// A simple function that takes a string and does a ToUpper
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public void FunctionHandler(string input, ILambdaContext context)
         {
-            var context = new MaxScaleProxyDbContext();
+            var dbContext = new MaxScaleProxyDbContext();
             int intTest = 1337;
             long longTest = 1337;
             DateTime dateTimeTest = DateTime.Now;
@@ -57,14 +73,14 @@ namespace MaxScaleProxyProblem
             };
             try
             {
-                context.ClickPerformanceReports.Add(report);
-                context.SaveChanges();
+                dbContext.ClickPerformanceReports.Add(report);
+                dbContext.SaveChanges();
             }
             catch (Exception ex)
-			{
-				Console.WriteLine("Test failed with an exception");
-				Console.WriteLine(ex.ToString());
-			}
+            {
+                context.Logger.LogLine("Test failed with an exception");
+                context.Logger.LogLine(ex.ToString());
+            }
         }
     }
 }
